@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Acesso - Projeto Eva</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background: #007BFF;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+            position: relative;
+        }
+        header h1 {
+            margin: 0;
+        }
+        #home-icon {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+        #home-icon:hover + #dropdown-menu {
+            display: block;
+        }
+        #dropdown-menu {
+            display: none;
+            position: absolute;
+            left: 10px;
+            top: 40px;
+            background: #007BFF;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #dropdown-menu a {
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            padding: 5px 0;
+        }
+        #dropdown-menu a:hover {
+            background: #0056b3;
+        }
+        .section {
+            padding: 20px;
+            background: #fff;
+            max-width: 1200px;
+            margin: 20px auto;
+            border-radius: 8px;
+            display: none;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 10px 0;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background: #007BFF;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .info-container {
+            margin-top: 20px;
+        }
+        .info-item {
+            margin-bottom: 20px;
+        }
+        .info-item h2 {
+            margin: 0 0 10px;
+        }
+    </style>
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        function addInfo(sectionId) {
+            const title = document.getElementById('info-title-' + sectionId).value;
+            const description = document.getElementById('info-description-' + sectionId).value;
+            const imageInput = document.getElementById('info-image-' + sectionId);
+            const videoInput = document.getElementById('info-video-' + sectionId);
+            const infoContainer = document.getElementById('info-container-' + sectionId);
+
+            if (title && description) {
+                const reader = new FileReader();
+                let imageURL = '';
+                let videoURL = '';
+
+                if (imageInput.files.length > 0) {
+                    reader.onload = function(e) {
+                        imageURL = e.target.result;
+                        saveInfo(sectionId, title, description, imageURL, videoURL);
+                    }
+                    reader.readAsDataURL(imageInput.files[0]);
+                } else if (videoInput.files.length > 0) {
+                    reader.onload = function(e) {
+                        videoURL = e.target.result;
+                        saveInfo(sectionId, title, description, imageURL, videoURL);
+                    }
+                    reader.readAsDataURL(videoInput.files[0]);
+                } else {
+                    saveInfo(sectionId, title, description, imageURL, videoURL);
+                }
+            }
+        }
+
+        function saveInfo(sectionId, title, description, imageURL, videoURL) {
+            const infoContainer = document.getElementById('info-container-' + sectionId);
+            const infoItem = document.createElement('div');
+            infoItem.className = 'info-item';
+            infoItem.innerHTML = `
+                <h2>${title}</h2>
+                <p>${description}</p>
+                ${imageURL ? `<img src="${imageURL}" alt="${title}">` : ''}
+                ${videoURL ? `<video controls src="${videoURL}" alt="${title}"></video>` : ''}
+            `;
+            infoContainer.appendChild(infoItem);
+            document.getElementById('info-form-' + sectionId).reset();
+        }
+
+        // Redireciona para a home
+        function goHome() {
+            const dropdownMenu = document.getElementById('dropdown-menu');
+            dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <img id="home-icon" src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Home" onclick="goHome()">
+        <h1>Painel de Acesso - Projeto Eva</h1>
+        <div id="dropdown-menu">
+            <a href="#" onclick="showSection('projeto-eva')">Projeto Eva</a>
+            <a href="#" onclick="showSection('programacao')">Eva Programação</a>
+            <a href="#" onclick="showSection('diretrizes')">Eva Diretrizes</a>
+        </div>
+    </header>
+    
+    <!-- Seções -->
+    <div id="projeto-eva" class="section">
+        <h2>Projeto Eva</h2>
+        <form id="info-form-projeto-eva">
+            <div class="form-group">
+                <input type="text" id="info-title-projeto-eva" placeholder="Título da Informação" required>
+            </div>
+            <div class="form-group">
+                <textarea id="info-description-projeto-eva" placeholder="Descrição da Informação" rows="5" required></textarea>
+            </div>
+            <div class="form-group">
+                <input type="file" id="info-image-projeto-eva" accept="image/*">
+                <input type="file" id="info-video-projeto-eva" accept="video/*">
+            </div>
+            <button type="button" onclick="addInfo('projeto-eva')">Adicionar Informação</button>
+        </form>
+        <div id="info-container-projeto-eva" class="info-container"></div>
+    </div>
+
+    <div id="programacao" class="section">
+        <h2>Eva Programação</h2>
+        <form id="info-form-programacao">
+            <div class="form-group">
+                <input type="text" id="info-title-programacao" placeholder="Título da Informação" required>
+            </div>
+            <div class="form-group">
+                <textarea id="info-description-programacao" placeholder="Descrição da Informação" rows="5" required></textarea>
+            </div>
+            <div class="form-group">
+                <input type="file" id="info-image-programacao" accept="image/*">
+                <input type="file" id="info-video-programacao" accept="video/*">
+            </div>
+            <button type="button" onclick="addInfo('programacao')">Adicionar Informação</button>
+        </form>
+        <div id="info-container-programacao" class="info-container"></div>
+    </div>
+
+    <div id="diretrizes" class="section">
+        <h2>Eva Diretrizes</h2>
+        <form id="info-form-diretrizes">
+            <div class="form-group">
+                <input type="text" id="info-title-diretrizes" placeholder="Título da Informação" required>
+            </div>
+            <div class="form-group">
+                <textarea id="info-description-diretrizes" placeholder="Descrição da Informação" rows="5" required></textarea>
+            </div>
+            <div class="form-group">
+                <input type="file" id="info-image-diretrizes" accept="image/*">
+                <input type="file" id="info-video-diretrizes" accept="video/*">
+            </div>
+            <button type="button" onclick="addInfo('diretrizes')">Adicionar Informação</button>
+        </form>
+        <div id="info-container-diretrizes" class="info-container"></div>
+    </div>
+</body>
+</html>
